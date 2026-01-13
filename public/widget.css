@@ -1,569 +1,597 @@
-    :root {
-      --dark: #1f2128;
-      --bubble: #f4f5f7;
-      --border: #e5e7eb;
-      --muted: #6b7280;
-      --radius-lg: 20px;
-      --radius-md: 14px;
-    }
+:root {
+  --dark: #1f2128;
+  --bubble: #f4f5f7;
+  --border: #e5e7eb;
+  --muted: #6b7280;
+  --radius-lg: 20px;
+  --radius-md: 14px;
+}
 
-    body {
-      margin: 0;
-      font-family: Inter, Arial, sans-serif
-    }
+/* შესწორება 1: ფონის გაქრობა და კლიკების გატარება */
+html,
+body {
+  background-color: transparent !important;
+  /* ფონი გამჭვირვალე */
+  background: none !important;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  /* სქროლის მოშორება */
+  pointer-events: none;
+  /* მნიშვნელოვანია: კლიკი გაატაროს საიტზე */
+}
 
-    /* Launcher */
-    #geg-chat-launcher {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: var(--dark);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      overflow: hidden;
-    }
+body {
+  font-family: Inter, Arial, sans-serif;
+}
 
-    #geg-chat-launcher img {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      object-fit: cover;
-      display: block;
-    }
+/* Launcher (ღილაკი) */
+#geg-chat-launcher {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
 
+  /* შესწორება 2: ღილაკი უნდა იყოს დაკლიკვადი */
+  pointer-events: auto;
+}
 
+#geg-chat-launcher img {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
 
-    #geg-chat-window {
-      position: fixed;
-      bottom: 35px;
-      right: 24px;
-      width: 380px;
-      height: calc(100vh - 140px);
-      max-height: none;
-
-      display: none;
-      flex-direction: column;
-      overflow: hidden;
-
-      background: #fff;
-      border-radius: var(--radius-lg);
-      border: 1px solid rgba(0, 0, 0, 0.06);
-      box-shadow:
-        0 12px 24px rgba(0, 0, 0, 0.12),
-        0 2px 6px rgba(0, 0, 0, 0.06);
-
-      z-index: 10000;
-
-      opacity: 0;
-      /* ⭐ აუცილებელია */
-      transform: scale(0.95);
-      /* ⭐ აუცილებელია */
-
-      transition: opacity .25s ease, transform .25s ease;
-    }
-
-    #geg-chat-window.open {
-      display: flex;
-      opacity: 1;
-      transform: scale(1);
-    }
+#geg-chat-launcher img {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
 
 
-    /* =========================
+
+#geg-chat-window {
+  position: fixed;
+  bottom: 35px;
+  right: 24px;
+  width: 380px;
+  height: calc(100vh - 140px);
+  max-height: none;
+
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+
+  background: #fff;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 12px 24px rgba(0, 0, 0, 0.12),
+    0 2px 6px rgba(0, 0, 0, 0.06);
+
+  z-index: 10000;
+
+  opacity: 0;
+  /* ⭐ აუცილებელია */
+  transform: scale(0.95);
+  /* ⭐ აუცილებელია */
+
+  transition: opacity .25s ease, transform .25s ease;
+  pointer-events: auto;
+}
+
+#geg-chat-window.open {
+  display: flex;
+  opacity: 1;
+  transform: scale(1);
+}
+
+
+/* =========================
    INTERCOM STYLE HEADER
 ========================= */
-    #geg-chat-header {
-      padding: 18px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: none;
+#geg-chat-header {
+  padding: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: none;
 
-      background: linear-gradient(135deg, #0b5cff 0%, #3b82f6 100%);
-      color: #fff;
-    }
+  background: linear-gradient(135deg, #0b5cff 0%, #3b82f6 100%);
+  color: #fff;
+}
 
-    /* Logo white */
-    #geg-chat-header img {
-      height: 22px;
-      filter: brightness(0) invert(1);
-    }
+/* Logo white */
+#geg-chat-header img {
+  height: 22px;
+  filter: brightness(0) invert(1);
+}
 
-    /* Close button */
-    #geg-chat-close {
-      color: rgba(255, 255, 255, 0.9);
-    }
+/* Close button */
+#geg-chat-close {
+  color: rgba(255, 255, 255, 0.9);
+}
 
-    #geg-chat-body {
-      padding: 16px;
-      overflow-y: auto;
-      flex: 1;
-      /* ⭐ აუცილებელია */
-    }
-
-
-    .message {
-      background: var(--bubble);
-      padding: 14px 16px;
-      border-radius: var(--radius-md);
-      font-size: 14.5px;
-      line-height: 1.45;
-      margin-bottom: 14px
-    }
-
-    .back {
-      font-size: 13.5px;
-      color: var(--muted);
-      cursor: pointer;
-      margin-bottom: 10px
-    }
-
-    .btn {
-      padding: 14px 16px;
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border);
-      background: #fff;
-      cursor: pointer;
-      font-size: 14.5px;
-      margin-bottom: 10px
-    }
-
-    /* ✅ Default hover (light, safe) */
-    .btn:hover {
-      background: #f9fafb;
-      color: #111;
-      border-color: #e5e7eb;
-    }
+#geg-chat-body {
+  padding: 16px;
+  overflow-y: auto;
+  flex: 1;
+  /* ⭐ აუცილებელია */
+}
 
 
-    .btn:focus,
-    .btn:active {
-      outline: none;
-      box-shadow: none;
-    }
+.message {
+  background: var(--bubble);
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  font-size: 14.5px;
+  line-height: 1.45;
+  margin-bottom: 14px
+}
 
-    /* Carousel */
-    .carousel-wrapper {
-      position: relative;
-      margin-top: 8px;
-      overflow: hidden
-    }
+.back {
+  font-size: 13.5px;
+  color: var(--muted);
+  cursor: pointer;
+  margin-bottom: 10px
+}
 
-    .carousel {
-      display: flex;
-      gap: 12px;
-      overflow-x: auto;
-      scroll-behavior: smooth;
-      padding: 0 28px 6px
-    }
+.btn {
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: #fff;
+  cursor: pointer;
+  font-size: 14.5px;
+  margin-bottom: 10px
+}
 
-    .carousel::-webkit-scrollbar {
-      display: none
-    }
-
-    .card {
-      min-width: 220px;
-      max-width: 220px;
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      overflow: hidden;
-      flex-shrink: 0;
-
-      display: flex;
-      flex-direction: column
-    }
-
-    .card-image {
-      aspect-ratio: 4/3;
-      background: #f1f2f4;
-      display: flex;
-      align-items: center;
-      justify-content: center
-    }
-
-    .card-image img {
-      max-width: 100%;
-      object-fit: contain
-    }
-
-    .card-body {
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      height: 100%
-    }
-
-    .card-title {
-      font-weight: 600;
-      font-size: 14px;
-      margin-bottom: 4px
-    }
-
-    .card-desc {
-      font-size: 13px;
-      color: var(--muted);
-      margin-bottom: 10px
-    }
-
-    .card-body button {
-      width: 100%;
-      padding: 10px;
-      border-radius: 10px;
-      border: none;
-      background: var(--dark);
-      color: #fff;
-      cursor: pointer;
-      margin-top: auto
-    }
-
-    .arrow {
-      position: absolute;
-      top: 45%;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: rgba(0, 0, 0, .6);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      z-index: 2
-    }
-
-    .arrow.left {
-      left: 6px
-    }
-
-    .arrow.right {
-      right: 6px
-    }
-
-    #chat-wrapper {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-
-      width: auto;
-      height: auto;
-
-      z-index: 9999;
-    }
+/* ✅ Default hover (light, safe) */
+.btn:hover {
+  background: #f9fafb;
+  color: #111;
+  border-color: #e5e7eb;
+}
 
 
-    #chat-wrapper #geg-chat-launcher {
-      position: static
-    }
+.btn:focus,
+.btn:active {
+  outline: none;
+  box-shadow: none;
+}
 
-    #chat-wrapper #side-typing {
-      position: static
-    }
+/* Carousel */
+.carousel-wrapper {
+  position: relative;
+  margin-top: 8px;
+  overflow: hidden
+}
 
-    #side-typing span::after {
-      content: "▍";
-      margin-left: 2px;
-      animation: blink 1s infinite
-    }
+.carousel {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 0 28px 6px
+}
 
-    #side-typing.done span::after {
-      content: "";
-      animation: none
-    }
+.carousel::-webkit-scrollbar {
+  display: none
+}
 
-    .card-body button {
-      pointer-events: auto;
-      position: relative;
-      z-index: 5;
-    }
+.card {
+  min-width: 220px;
+  max-width: 220px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  flex-shrink: 0;
 
-    @keyframes blink {
+  display: flex;
+  flex-direction: column
+}
 
-      0%,
-      50%,
-      100% {
-        opacity: 1
-      }
+.card-image {
+  aspect-ratio: 4/3;
+  background: #f1f2f4;
+  display: flex;
+  align-items: center;
+  justify-content: center
+}
 
-      25%,
-      75% {
-        opacity: 0
-      }
-    }
+.card-image img {
+  max-width: 100%;
+  object-fit: contain
+}
 
-    /* მხოლოდ launcher უნდა იყოს clickable */
-    #geg-chat-launcher {
-      pointer-events: auto;
-    }
+.card-body {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  height: 100%
+}
 
-    /* side ტექსტი არ უნდა იჭერდეს click-ს */
-    #side-typing {
-      pointer-events: auto;
-      cursor: pointer;
-    }
+.card-title {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 4px
+}
 
-    #geg-chat-body {
-      display: flex;
-      flex-direction: column;
-    }
+.card-desc {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 10px
+}
 
-    
+.card-body button {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: var(--dark);
+  color: #fff;
+  cursor: pointer;
+  margin-top: auto
+}
 
-    /* =========================
+.arrow {
+  position: absolute;
+  top: 45%;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, .6);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2
+}
+
+.arrow.left {
+  left: 6px
+}
+
+.arrow.right {
+  right: 6px
+}
+
+#chat-wrapper {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+
+  width: auto;
+  height: auto;
+
+  z-index: 9999;
+}
+
+
+#chat-wrapper #geg-chat-launcher {
+  position: static
+}
+
+#chat-wrapper #side-typing {
+  position: static
+}
+
+#side-typing span::after {
+  content: "▍";
+  margin-left: 2px;
+  animation: blink 1s infinite
+}
+
+#side-typing.done span::after {
+  content: "";
+  animation: none
+}
+
+.card-body button {
+  pointer-events: auto;
+  position: relative;
+  z-index: 5;
+}
+
+@keyframes blink {
+
+  0%,
+  50%,
+  100% {
+    opacity: 1
+  }
+
+  25%,
+  75% {
+    opacity: 0
+  }
+}
+
+/* მხოლოდ launcher უნდა იყოს clickable */
+#geg-chat-launcher {
+  pointer-events: auto;
+}
+
+/* side ტექსტი არ უნდა იჭერდეს click-ს */
+#side-typing {
+  pointer-events: auto;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+#geg-chat-body {
+  display: flex;
+  flex-direction: column;
+}
+
+
+
+/* =========================
    WELCOME TEXT
 ========================= */
-    .welcome-title {
-      font-size: 20px;
-      font-weight: 600;
-      line-height: 1.25;
-      margin-top: 8px;
-    }
+.welcome-title {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.25;
+  margin-top: 8px;
+}
 
-    .welcome-sub {
-      font-size: 14px;
-      opacity: 0.9;
-      margin-top: 4px;
-    }
+.welcome-sub {
+  font-size: 14px;
+  opacity: 0.9;
+  margin-top: 4px;
+}
 
-    /* =========================
+/* =========================
    HOME / WELCOME SCREEN
 ========================= */
 
-    .home-card {
-      background: #fff;
-      border: 1px solid #e5e7eb;
-      border-radius: 14px;
-      padding: 14px;
-      margin-bottom: 10px;
-      cursor: pointer;
-      transition: background .15s ease;
-    }
+.home-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: background .15s ease;
+}
 
-    .home-card:hover {
-      background: #f9fafb;
-    }
+.home-card:hover {
+  background: #f9fafb;
+}
 
-    .home-card.primary {
-      border-color: #2563eb;
-    }
+.home-card.primary {
+  border-color: #2563eb;
+}
 
-    .home-card strong {
-      display: block;
-      font-size: 14.5px;
-    }
+.home-card strong {
+  display: block;
+  font-size: 14.5px;
+}
 
-    .home-meta {
-      font-size: 13px;
-      color: #6b7280;
-      margin-top: 4px;
-    }
+.home-meta {
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 4px;
+}
 
-    .home-section {
-      margin-top: 18px;
-    }
+.home-section {
+  margin-top: 18px;
+}
 
-    .home-section-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: #6b7280;
-      margin-bottom: 6px;
-    }
+.home-section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 6px;
+}
 
-    .home-link {
-      padding: 10px 12px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 14px;
-    }
+.home-link {
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+}
 
-    .home-link:hover {
-      background: #f3f4f6;
-    }
-
-
+.home-link:hover {
+  background: #f3f4f6;
+}
 
 
 
-    /* =========================
+
+
+/* =========================
    SEND MESSAGE CTA (INTERCOM STYLE)
 ========================= */
 
-    /* =========================
+/* =========================
    SEND MESSAGE ROW (INTERCOM STYLE)
 ========================= */
 
-    .send-message-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 16px;
-      border-radius: 14px;
-      border: 1px solid #e5e7eb;
-      background: #fff;
-      cursor: pointer;
-      margin-bottom: 18px;
-      transition: background 0.15s ease;
-    }
+.send-message-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  cursor: pointer;
+  margin-bottom: 18px;
+  transition: background 0.15s ease;
+}
 
-    .send-message-row:hover {
-      background: #f9fafb;
-    }
+.send-message-row:hover {
+  background: #f9fafb;
+}
 
-    .send-message-left {
-      display: flex;
-      flex-direction: column;
-    }
+.send-message-left {
+  display: flex;
+  flex-direction: column;
+}
 
-    .send-message-title {
-      font-size: 14.5px;
-      font-weight: 600;
-    }
+.send-message-title {
+  font-size: 14.5px;
+  font-weight: 600;
+}
 
-    .send-message-sub {
-      font-size: 13px;
-      color: #6b7280;
-      margin-top: 2px;
-    }
+.send-message-sub {
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 2px;
+}
 
-    .send-message-arrow {
-      color: #2563eb;
-      font-size: 18px;
-      font-weight: 600;
-    }
+.send-message-arrow {
+  color: #2563eb;
+  font-size: 18px;
+  font-weight: 600;
+}
 
-    .messenger-btn {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+.messenger-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
-    .messenger-btn svg {
-      width: 18px;
-      height: 18px;
-      color: #2563eb;
-      /* Messenger blue */
-    }
+.messenger-btn svg {
+  width: 18px;
+  height: 18px;
+  color: #2563eb;
+  /* Messenger blue */
+}
 
-    .btn:hover {
-      background: #f9fafb;
-      color: #111;
-      border-color: #e5e7eb;
-    }
-
-    
-
-    /* NEW CTA LIST */
-    .cta-list {
-      margin-top: 26px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .cta-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 14px;
-      border-radius: 14px;
-      background: #fff;
-      border: 1px solid #e5e7eb;
-      cursor: pointer;
-      transition: background .15s ease, border-color .15s ease;
-    }
-
-    .cta-row:hover {
-      background: #f9fafb;
-    }
-
-    /* PRIMARY CHAT */
-    .cta-row.primary {
-      background: #2563eb;
-      color: #fff;
-      border: none;
-    }
-
-    .cta-row.primary:hover {
-      background: #1d4ed8;
-    }
-
-    /* ICON */
-    .cta-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(37, 99, 235, 0.08);
-    }
-
-    .cta-row.primary .cta-icon {
-      background: rgba(255, 255, 255, 0.2);
-    }
-
-    .whatsapp-icon {
-      background: rgba(37, 211, 102, 0.15);
-      color: #25D366;
-    }
-
-    /* TEXT */
-    .cta-text {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .cta-title {
-      font-size: 15px;
-      font-weight: 700;
-      letter-spacing: -0.1px;
-    }
+.btn:hover {
+  background: #f9fafb;
+  color: #111;
+  border-color: #e5e7eb;
+}
 
 
-    .cta-sub {
-      font-size: 13px;
-      color: #6b7280;
-    }
 
-    .cta-row.primary .cta-sub {
-      color: rgba(255, 255, 255, 0.85);
-    }
+/* NEW CTA LIST */
+.cta-list {
+  margin-top: 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 
-    .cta-arrow {
-      margin-left: auto;
-      font-size: 18px;
-      opacity: 0.6;
-    }
+.cta-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+  transition: background .15s ease, border-color .15s ease;
+}
 
-    /* ICON WRAPPER */
-    .cta-icon {
-      width: 36px;
-      height: 36px;
-      min-width: 36px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+.cta-row:hover {
+  background: #f9fafb;
+}
 
-    /* WhatsApp specific */
-    .cta-row.whatsapp .cta-icon {
-      background: rgba(37, 211, 102, 0.18);
-      color: #25D366;
-    }
+/* PRIMARY CHAT */
+.cta-row.primary {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+}
 
-    /* SVG sizing */
-    .cta-icon svg {
-      display: block;
-      width: 18px;
-      height: 18px;
-    }
+.cta-row.primary:hover {
+  background: #1d4ed8;
+}
+
+/* ICON */
+.cta-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(37, 99, 235, 0.08);
+}
+
+.cta-row.primary .cta-icon {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.whatsapp-icon {
+  background: rgba(37, 211, 102, 0.15);
+  color: #25D366;
+}
+
+/* TEXT */
+.cta-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.cta-title {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.1px;
+}
+
+
+.cta-sub {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.cta-row.primary .cta-sub {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.cta-arrow {
+  margin-left: auto;
+  font-size: 18px;
+  opacity: 0.6;
+}
+
+/* ICON WRAPPER */
+.cta-icon {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* WhatsApp specific */
+.cta-row.whatsapp .cta-icon {
+  background: rgba(37, 211, 102, 0.18);
+  color: #25D366;
+}
+
+/* SVG sizing */
+.cta-icon svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+}
 
 /* =========================
    LIVE CHAT (MESSENGER STYLE)
@@ -601,7 +629,7 @@
   flex: 1;
   padding: 14px;
   overflow-y: auto;
-  min-height: 0;  
+  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -697,8 +725,10 @@
 ========================= */
 
 #operatorTyping {
-  font-size: 12px;              /* 👈 პატარა */
-  color: #9ca3af;               /* 👈 მკრთალი ნაცრისფერი */
+  font-size: 12px;
+  /* 👈 პატარა */
+  color: #9ca3af;
+  /* 👈 მკრთალი ნაცრისფერი */
   padding: 6px 14px 4px;
   line-height: 1;
   min-height: 18px;
@@ -713,21 +743,31 @@
 }
 
 @keyframes typingDots {
-  0%   { opacity: .3; }
-  50%  { opacity: .8; }
-  100% { opacity: .3; }
+  0% {
+    opacity: .3;
+  }
+
+  50% {
+    opacity: .8;
+  }
+
+  100% {
+    opacity: .3;
+  }
 }
 
 
 #lcMessages {
   overflow-y: auto;
   flex: 1;
-  min-height: 0; /* 🔥 ეს თუ არ არის, scroll არასწორია */
+  min-height: 0;
+  /* 🔥 ეს თუ არ არის, scroll არასწორია */
 }
 
 .chat-system {
   font-size: 12px;
-  color: #9ca3af; /* ძალიან მკრთალი ნაცრისფერი */
+  color: #9ca3af;
+  /* ძალიან მკრთალი ნაცრისფერი */
   text-align: center;
   margin: 10px 0;
   user-select: none;
@@ -746,7 +786,8 @@
 
 .prechat-input {
   width: 100%;
-  box-sizing: border-box; /* 🔥 გადაცდენის FIX */
+  box-sizing: border-box;
+  /* 🔥 გადაცდენის FIX */
   padding: 14px 16px;
   border-radius: 14px;
   border: 1px solid #e5e7eb;
@@ -899,8 +940,10 @@
   background: none;
   border: none;
 
-  color: #ffffff;          /* მკვეთრი თეთრი */
-  font-size: 26px;         /* ვიზუალურად ბალანსირებული */
+  color: #ffffff;
+  /* მკვეთრი თეთრი */
+  font-size: 26px;
+  /* ვიზუალურად ბალანსირებული */
   font-weight: 400;
 
   line-height: 1;
@@ -917,4 +960,3 @@
   opacity: 1;
   transform: translateY(-1px);
 }
-
