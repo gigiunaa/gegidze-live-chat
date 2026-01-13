@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Gegidze Chat</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/widget.css">
+</head>
+
+<body>
+
+  <div id="chat-wrapper">
+    <div id="geg-chat-launcher">
+      <img src="assets/gegidze logo.png">
+    </div>
+    <div id="side-typing"><span id="side-text"></span></div>
+  </div>
+
+  <div id="geg-chat-window">
+    <div id="geg-chat-header">
+      <img src="assets/gegidze-logo.png">
+      <button id="geg-chat-close">—</button>
+    </div>
+    <div id="geg-chat-body"></div>
+
+
+<div id="live-chat">
+
+  <!-- LIVE CHAT HEADER -->
+  <div class="lc-header">
+    <button class="lc-back" onclick="exitLiveChat()">←</button>
+    <div>
+      <div class="lc-name">Support</div>
+      <div class="lc-status">Connecting…</div>
+    </div>
+  </div>
+
+  <!-- MESSAGES -->
+  <div class="lc-messages" id="lcMessages">
+    <div id="chat-end"></div>
+  </div>
+
+  <!-- TYPING -->
+  <div id="operatorTyping">
+    Support is typing…
+  </div>
+
+  <!-- INPUT -->
+<div class="lc-input" id="lcInputWrapper">
+  <input id="lcInput" placeholder="Type your message…" />
+  <button onclick="sendLiveMessage()">➤</button>
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+    <!-- JS -->
+    <script src="/widget.js"></script>
+</body>
+
+</html>

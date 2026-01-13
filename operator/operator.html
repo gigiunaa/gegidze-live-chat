@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Operator Inbox</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: #f4f5f7;
+    }
+
+    .layout {
+      display: flex;
+      height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 320px;
+      background: #ffffff;
+      border-right: 1px solid #e5e7eb;
+      overflow-y: auto;
+    }
+
+    .sidebar h2 {
+      padding: 16px;
+      margin: 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .conversation {
+      padding: 14px 16px;
+      border-bottom: 1px solid #f0f0f0;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .conversation:hover {
+      background: #f9fafb;
+    }
+
+    .conversation.active {
+      background: #eef2ff;
+    }
+
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .status {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .status.open {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .status.waiting {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .badge {
+      font-size: 12px;
+    }
+
+    /* Chat area */
+    .chat {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #ffffff;
+    }
+
+    .chat-header {
+      padding: 16px;
+      border-bottom: 1px solid #e5e7eb;
+      font-weight: 600;
+    }
+
+    .messages {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      background: #f9fafb;
+    }
+
+    .bubble {
+      max-width: 70%;
+      margin-bottom: 10px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .bubble.user {
+      background: #e0e7ff;
+      align-self: flex-end;
+    }
+
+    .bubble.system {
+      background: #e5e7eb;
+      color: #374151;
+      font-size: 13px;
+    }
+
+    .bubble.operator {
+      background: #dcfce7;
+      align-self: flex-start;
+    }
+
+    .chat-input {
+      display: flex;
+      padding: 12px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+    }
+
+    .chat-input button {
+      margin-left: 8px;
+      padding: 10px 16px;
+      background: #4f46e5;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .conversation.unread {
+      background: #f4f5f7;
+      font-weight: 600;
+      position: relative;
+    }
+
+    .conversation.unread::after {
+      content: "";
+      width: 8px;
+      height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .conversation.active {
+      background: #eef2ff;
+      border-left: 4px solid #4f46e5;
+    }
+
+    .conversation.closed {
+      opacity: 0.45;
+    }
+
+    .status.closed {
+      background: #e5e7eb;
+      color: #374151;
+    }
+  </style>
+</head>
+
+<body>
+  <script>
+    const token = localStorage.getItem("operator_token");
+
+    if (!token) {
+      window.location.href = "/operator/login.html";
+    }
+  </script>
+
+  <div class="layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <h2>📥 Operator Inbox</h2>
+      <div id="conversationList"></div>
+    </div>
+
+    <!-- Chat -->
+    <div class="chat">
+      <div class="chat-header" style="display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <span id="chatTitle">Select a conversation</span>
+          <span id="typingIndicator" style="display:none;font-weight:400;color:#6b7280;">
+            · typing…
+          </span>
+        </div>
+        <button id="joinBtn" style="
+    padding:6px 12px;
+    font-size:12px;
+    background:#22c55e;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    display:none;
+  ">
+          Join chat
+        </button>
+
+        <button id="resolveBtn" style="
+        padding:6px 12px;
+        font-size:12px;
+        background:#ef4444;
+        color:white;
+        border:none;
+        border-radius:8px;
+        cursor:pointer;
+        display:none;
+      ">
+          Resolve
+        </button>
+      </div>
+
+      <div class="messages" id="messages"></div>
+
+      <div class="chat-input">
+        <input id="replyInput" placeholder="Type your reply…" />
+        <button onclick="sendReply()">Send</button>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <script>
+    let activeConversationId = null;
+    let pollingInterval = null;
+    let lastMessageId = null;
+    // 🔔 SOUND STATE
+    let prevUnreadIds = new Set();
+    let soundArmed = false;
+    let autoOpenedConversationId = null;
+    let messagePoll = null;
+    let lastRenderedCount = 0;
+    let operatorJoined = false;
+
+
+
+
+    // simple beep (inline, no file needed)
+    const beep = new Audio(
+      "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA="
+    );
+
+    // browser needs user gesture to allow sound
+    function armSoundOnce() {
+      if (soundArmed) return;
+      soundArmed = true;
+      beep.play().catch(() => { });
+    }
+
+    document.addEventListener("click", armSoundOnce, { once: true });
+    document.addEventListener("keydown", armSoundOnce, { once: true });
+
+
+
+
+
+    async function loadConversations() {
+      const newUnreadIds = new Set();
+      let firstUnread = null;
+
+      const res = await fetch("/operator/conversations", {
+        headers: {
+          "Authorization": "Bearer " + localStorage.getItem("operator_token")
+        }
+      });
+
+      const conversations = await res.json();
+      console.log("CONVERSATIONS:", conversations);
+
+      if (!Array.isArray(conversations)) {
+        console.error("Expected array but got:", conversations);
+        return;
+      }
+
+      const list = document.getElementById("conversationList");
+      list.innerHTML = "";
+
+      conversations.forEach(c => {
+        const div = document.createElement("div");
+        div.className = "conversation";
+
+        if (c.status === "closed") {
+          div.classList.add("closed");
+        }
+
+
+        if (c.status === "closed") {
+          div.style.opacity = "0.5";
+          div.style.pointerEvents = "none";
+        }
+
+
+        const isUnread =
+          c.last_message_from === "user" &&
+          c.operator_seen === false;
+
+        if (isUnread) {
+          div.classList.add("unread");
+          newUnreadIds.add(c.id);
+
+          // ⭐ დაიმახსოვრე პირველი unread
+          if (!firstUnread) {
+            firstUnread = { id: c.id, el: div };
+          }
+        }
+
+        div.onclick = () => openConversation(c.id, div);
+
+        const displayName =
+          c.visitor_name?.trim()
+            ? c.visitor_name
+            : `Visitor #${c.id.slice(0, 8)}`;
+
+        const displayPhone =
+          c.visitor_phone
+            ? c.visitor_phone
+            : "";
+
+        div.innerHTML = `
+  <div>
+    <strong>👤 ${displayName}</strong>
+    ${displayPhone ? `<div style="font-size:12px;color:#6b7280;">📞 ${displayPhone}</div>` : ""}
+  </div>
+
+  <div class="meta" style="margin-top:6px;">
+    <span class="status ${c.status}">${c.status}</span>
+    <span class="badge">${c.business_hours ? "🟢 Hours" : "🔴 Off"}</span>
+  </div>
+`;
+
+
+        list.appendChild(div);
+      });
+
+      // 🔔 sound notification
+      let hasNewUnread = false;
+      for (const id of newUnreadIds) {
+        if (!prevUnreadIds.has(id)) {
+          hasNewUnread = true;
+          break;
+        }
+      }
+
+      if (hasNewUnread && soundArmed) {
+        beep.currentTime = 0;
+        beep.play().catch(() => { });
+      }
+
+      prevUnreadIds = newUnreadIds;
+
+    }
+
+
+
+
+    async function openConversation(id, el, reset = true) {
+      activeConversationId = id;
+
+      operatorJoined = false;
+      lastRenderedCount = 0;
+
+      // 🔓 ENABLE input once
+      const input = document.getElementById("replyInput");
+      const btn = document.querySelector(".chat-input button");
+
+      if (input) {
+        input.disabled = false;
+        input.value = "";
+      }
+      if (btn) btn.disabled = false;
+
+
+      if (reset) lastMessageId = null;
+
+      fetch(`/operator/seen/${id}`, {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer " + localStorage.getItem("operator_token")
+        }
+      }).catch(() => { });
+
+      document.querySelectorAll(".conversation")
+        .forEach(c => c.classList.remove("active"));
+
+      el.classList.add("active");
+      el.classList.remove("unread");
+
+      document.getElementById("chatTitle").textContent =
+        `Conversation #${id.slice(0, 8)}`;
+
+      const res = await fetch(`/messages/${id}`);
+      const msgs = await res.json();
+
+      const container = document.getElementById("messages");
+      container.innerHTML = "";
+
+      msgs.forEach(m => {
+        const b = document.createElement("div");
+        b.className = `bubble ${m.sender}`;
+        b.innerText = m.text;
+        container.appendChild(b);
+      });
+
+      lastRenderedCount = msgs.length;
+      container.scrollTop = container.scrollHeight;
+
+      startMessagePolling(id);
+      document.getElementById("resolveBtn").style.display = "inline-block";
+      document.getElementById("joinBtn").style.display = "inline-block";
+      if (msgs.some(m => m.sender === "system" && m.text.includes("joined"))) {
+        document.getElementById("joinBtn").style.display = "none";
+      } else {
+        document.getElementById("joinBtn").style.display = "inline-block";
+      }
+
+    }
+
+
+
+    async function sendReply() {
+      const input = document.getElementById("replyInput");
+      const text = input.value.trim();
+      if (!text || !activeConversationId) return;
+
+      // ✅ 1. INSTANT UI UPDATE (ოპერატორის მხარეს)
+      const container = document.getElementById("messages");
+      const b = document.createElement("div");
+      b.className = "bubble operator";
+      b.innerText = text;
+      container.appendChild(b);
+
+      lastRenderedCount++; // 🔑 ძალიან მნიშვნელოვანია
+      container.scrollTop = container.scrollHeight;
+
+      input.value = "";
+
+      // ✅ 2. SEND TO BACKEND (async)
+      fetch("/support/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + localStorage.getItem("operator_token")
+        },
+        body: JSON.stringify({
+          conversationId: activeConversationId,
+          message: text,
+          sender: "operator"
+        })
+      }).catch(() => {
+        console.error("Failed to send operator message");
+      });
+    }
+
+
+
+    const replyInput = document.getElementById("replyInput");
+    const typingEl = document.getElementById("typingIndicator");
+
+    let typingTimeout = null;
+
+    replyInput.addEventListener("input", () => {
+      typingEl.style.display = "inline";
+
+      // ⌨️ notify backend: operator is typing
+      if (activeConversationId) {
+        fetch(`/operator/typing/${activeConversationId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + localStorage.getItem("operator_token")
+          },
+          body: JSON.stringify({ typing: true })
+        }).catch(() => { });
+      }
+
+      clearTimeout(typingTimeout);
+      typingTimeout = setTimeout(() => {
+        typingEl.style.display = "none";
+
+        // ⛔ stop typing
+        if (activeConversationId) {
+          fetch(`/operator/typing/${activeConversationId}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + localStorage.getItem("operator_token")
+            },
+            body: JSON.stringify({ typing: false })
+          }).catch(() => { });
+        }
+      }, 900);
+    });
+
+    // ✅ ENTER to send message (Operator side)
+    replyInput.addEventListener("keydown", (e) => {
+      if (e.key !== "Enter") return;
+
+      // თუ ოდესმე textarea გახდება — Shift+Enter ახალ ხაზს დატოვებს
+      if (e.shiftKey) return;
+
+      e.preventDefault();
+
+      sendReply(); // ⬅️ იგივე ფუნქცია, რაც Send ღილაკს აქვს
+
+      // typing = false (სისუფთავისთვის)
+      if (activeConversationId) {
+        fetch(`/operator/typing/${activeConversationId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + localStorage.getItem("operator_token")
+          },
+          body: JSON.stringify({ typing: false })
+        }).catch(() => { });
+      }
+
+      typingEl.style.display = "none";
+    });
+
+
+
+
+    function startPolling() {
+      if (pollingInterval) return;
+
+      pollingInterval = setInterval(async () => {
+        await loadConversations();
+
+        /* if (activeConversationId) {
+          const activeEl = document.querySelector(".conversation.active");
+          if (activeEl) {
+            openConversation(activeConversationId, activeEl, false);
+          }
+        } */
+      }, 3000);
+    }
+
+    function startMessagePolling(conversationId) {
+      // 🛑 გააჩერე ძველი polling (აუცილებელია)
+      if (messagePoll) {
+        clearInterval(messagePoll);
+        messagePoll = null;
+      }
+
+      messagePoll = setInterval(async () => {
+        // თუ conversation შეიცვალა — არაფერი ქნა
+        if (!activeConversationId || activeConversationId !== conversationId) return;
+
+        try {
+          const res = await fetch(`/messages/${conversationId}`);
+          const messages = await res.json();
+
+          if (!Array.isArray(messages)) return;
+
+          const container = document.getElementById("messages");
+          if (!container) return;
+
+          if (messages.length > lastRenderedCount) {
+            const newMessages = messages.slice(lastRenderedCount);
+
+            newMessages.forEach(m => {
+              const b = document.createElement("div");
+              b.className = `bubble ${m.sender}`;
+              b.innerText = m.text;
+              container.appendChild(b);
+            });
+
+            lastRenderedCount = messages.length;
+            container.scrollTop = container.scrollHeight;
+          }
+        } catch (e) {
+          console.error("Operator message polling error", e);
+        }
+      }, 1000); // 0.8–1.2s იდეალურია
+    }
+
+    document.getElementById("joinBtn").onclick = async () => {
+      if (!activeConversationId) return;
+
+      await fetch(`/operator/join/${activeConversationId}`, {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer " + localStorage.getItem("operator_token")
+        }
+      });
+
+      document.getElementById("joinBtn").style.display = "none";
+    };
+
+
+
+    document.getElementById("resolveBtn").onclick = async () => {
+      if (!activeConversationId) return;
+
+      // ✅ force typing false on resolve (ჯერ აქ!)
+      fetch(`/operator/typing/${activeConversationId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + localStorage.getItem("operator_token")
+        },
+        body: JSON.stringify({ typing: false })
+      }).catch(() => { });
+
+      await fetch(`/operator/resolve/${activeConversationId}`, {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer " + localStorage.getItem("operator_token")
+        }
+      });
+
+      activeConversationId = null;
+
+      if (messagePoll) {
+        clearInterval(messagePoll);
+        messagePoll = null;
+      }
+
+      document.getElementById("messages").innerHTML = `
+    <div class="bubble system">
+      🔒 This conversation has been closed
+    </div>
+  `;
+
+      document.getElementById("replyInput").disabled = true;
+      document.querySelector(".chat-input button").disabled = true;
+      document.getElementById("resolveBtn").style.display = "none";
+      document.getElementById("chatTitle").textContent = "Conversation closed";
+      document.getElementById("typingIndicator").style.display = "none";
+      document.getElementById("joinBtn").style.display = "none";
+    };
+
+
+
+
+
+    loadConversations();
+    startPolling();
+  </script>
+</body>
+
+</html>
