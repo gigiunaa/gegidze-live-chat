@@ -7,6 +7,12 @@
       --radius-md: 14px;
     }
 
+    html,
+    body {
+      height: 100%;
+    }
+
+
     body {
       margin: 0;
       font-family: Inter, Arial, sans-serif
@@ -36,12 +42,12 @@
 
 
     #geg-chat-window {
-      position: fixed;
-      bottom: 35px;
-      right: 24px;
-      width: 380px;
-      height: calc(100vh - 140px);
-      max-height: none;
+      position: relative;
+      /* ❗️fixed → relative */
+      width: 100%;
+      height: 100%;
+      /* ❗️100vh → 100% */
+      max-height: 100%;
 
       display: none;
       flex-direction: column;
@@ -54,15 +60,11 @@
         0 12px 24px rgba(0, 0, 0, 0.12),
         0 2px 6px rgba(0, 0, 0, 0.06);
 
-      z-index: 10000;
-
       opacity: 0;
-      /* ⭐ აუცილებელია */
       transform: scale(0.95);
-      /* ⭐ აუცილებელია */
-
       transition: opacity .25s ease, transform .25s ease;
     }
+
 
     #geg-chat-window.open {
       display: flex;
@@ -313,7 +315,7 @@
       flex-direction: column;
     }
 
-    
+
 
     /* =========================
    WELCOME TEXT
@@ -456,7 +458,7 @@
       border-color: #e5e7eb;
     }
 
-    
+
 
     /* NEW CTA LIST */
     .cta-list {
@@ -565,328 +567,339 @@
       height: 18px;
     }
 
-/* =========================
+    /* =========================
    LIVE CHAT (MESSENGER STYLE)
 ========================= */
 
-#live-chat {
-  display: none;
-  flex-direction: column;
-  height: 100%;
-  min-height: 0;
-}
+    #live-chat {
+      display: none;
+      flex-direction: column;
+      height: 100%;
+      min-height: 0;
+    }
 
-.lc-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
-  border-bottom: 1px solid #e5e7eb;
-  background: #fff;
-}
-
-
-.lc-name {
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.lc-status {
-  font-size: 12px;
-  color: #6b7280;
-  margin-top: 2px;
-}
-
-.lc-messages {
-  flex: 1;
-  padding: 14px;
-  overflow-y: auto;
-  min-height: 0;  
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-
-  /* ⭐ აუცილებელი */
-  overscroll-behavior: contain;
-}
+    .lc-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e5e7eb;
+      background: #fff;
+    }
 
 
-.lc-bubble {
-  max-width: 78%;
-  padding: 12px 14px;
-  border-radius: 18px;
-  font-size: 14.5px;
-  line-height: 1.45;
-  word-wrap: break-word;
-  overflow-wrap: anywhere;
-}
+    .lc-name {
+      font-size: 14px;
+      font-weight: 600;
+    }
 
-.lc-bubble.user {
-  align-self: flex-end;
-  background: #2563eb;
-  color: #fff;
-  border-bottom-right-radius: 6px;
-}
+    .lc-status {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 2px;
+    }
 
-.lc-bubble.agent {
-  align-self: flex-start;
-  background: #f4f5f7;
-  color: #111;
-  border-bottom-left-radius: 6px;
-}
+    .lc-messages {
+      flex: 1;
+      padding: 14px;
+      overflow-y: auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
 
-.lc-input {
-  display: flex;
-  gap: 8px;
-  padding: 12px;
-  border-top: 1px solid #e5e7eb;
-  background: #fff;
-}
+      /* ⭐ აუცილებელი */
+      overscroll-behavior: contain;
+    }
 
-.lc-input input {
-  flex: 1;
-  padding: 12px 14px;
-  border-radius: 18px;
-  border: 1px solid #e5e7eb;
-  font-size: 14px;
-}
 
-.lc-input button {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: none;
-  background: #2563eb;
-  color: #fff;
-  cursor: pointer;
-}
+    .lc-bubble {
+      max-width: 78%;
+      padding: 12px 14px;
+      border-radius: 18px;
+      font-size: 14.5px;
+      line-height: 1.45;
+      word-wrap: break-word;
+      overflow-wrap: anywhere;
+    }
 
-#live-chat {
-  flex: 1;
-}
+    .lc-bubble.user {
+      align-self: flex-end;
+      background: #2563eb;
+      color: #fff;
+      border-bottom-right-radius: 6px;
+    }
 
-/* Live chat mode hides main header */
-#geg-chat-window.live-mode #geg-chat-header {
-  display: none;
-}
+    .lc-bubble.agent {
+      align-self: flex-start;
+      background: #f4f5f7;
+      color: #111;
+      border-bottom-left-radius: 6px;
+    }
 
-#geg-chat-window.live-mode #geg-chat-body {
-  display: none;
-}
+    .lc-input {
+      display: flex;
+      gap: 8px;
+      padding: 12px;
+      border-top: 1px solid #e5e7eb;
+      background: #fff;
+    }
 
-.lc-back {
-  border: none;
-  background: transparent;
-  font-size: 18px;
-  cursor: pointer;
-  color: #2563eb;
-  padding: 0;
-  line-height: 1;
-}
+    .lc-input input {
+      flex: 1;
+      padding: 12px 14px;
+      border-radius: 18px;
+      border: 1px solid #e5e7eb;
+      font-size: 14px;
+    }
 
-.lc-back:hover {
-  opacity: 0.75;
-}
+    .lc-input button {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: #2563eb;
+      color: #fff;
+      cursor: pointer;
+    }
 
-#operatorTyping {
-  min-height: 20px;
-}
+    #live-chat {
+      flex: 1;
+    }
 
-/* =========================
+    /* Live chat mode hides main header */
+    #geg-chat-window.live-mode #geg-chat-header {
+      display: none;
+    }
+
+    #geg-chat-window.live-mode #geg-chat-body {
+      display: none;
+    }
+
+    .lc-back {
+      border: none;
+      background: transparent;
+      font-size: 18px;
+      cursor: pointer;
+      color: #2563eb;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .lc-back:hover {
+      opacity: 0.75;
+    }
+
+    #operatorTyping {
+      min-height: 20px;
+    }
+
+    /* =========================
    OPERATOR TYPING INDICATOR
 ========================= */
 
-#operatorTyping {
-  font-size: 12px;              /* 👈 პატარა */
-  color: #9ca3af;               /* 👈 მკრთალი ნაცრისფერი */
-  padding: 6px 14px 4px;
-  line-height: 1;
-  min-height: 18px;
-  user-select: none;
-}
+    #operatorTyping {
+      font-size: 12px;
+      /* 👈 პატარა */
+      color: #9ca3af;
+      /* 👈 მკრთალი ნაცრისფერი */
+      padding: 6px 14px 4px;
+      line-height: 1;
+      min-height: 18px;
+      user-select: none;
+    }
 
-#operatorTyping::before {
-  content: "● ● ●";
-  letter-spacing: 2px;
-  margin-right: 6px;
-  animation: typingDots 1.4s infinite;
-}
+    #operatorTyping::before {
+      content: "● ● ●";
+      letter-spacing: 2px;
+      margin-right: 6px;
+      animation: typingDots 1.4s infinite;
+    }
 
-@keyframes typingDots {
-  0%   { opacity: .3; }
-  50%  { opacity: .8; }
-  100% { opacity: .3; }
-}
+    @keyframes typingDots {
+      0% {
+        opacity: .3;
+      }
+
+      50% {
+        opacity: .8;
+      }
+
+      100% {
+        opacity: .3;
+      }
+    }
 
 
-#lcMessages {
-  overflow-y: auto;
-  flex: 1;
-  min-height: 0; /* 🔥 ეს თუ არ არის, scroll არასწორია */
-}
+    #lcMessages {
+      overflow-y: auto;
+      flex: 1;
+      min-height: 0;
+      /* 🔥 ეს თუ არ არის, scroll არასწორია */
+    }
 
-.chat-system {
-  font-size: 12px;
-  color: #9ca3af; /* ძალიან მკრთალი ნაცრისფერი */
-  text-align: center;
-  margin: 10px 0;
-  user-select: none;
-}
+    .chat-system {
+      font-size: 12px;
+      color: #9ca3af;
+      /* ძალიან მკრთალი ნაცრისფერი */
+      text-align: center;
+      margin: 10px 0;
+      user-select: none;
+    }
 
-/* =========================
+    /* =========================
    PRE-CHAT FORM (PREMIUM)
 ========================= */
 
-.prechat-form {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: 12px;
-}
+    .prechat-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 12px;
+    }
 
-.prechat-input {
-  width: 100%;
-  box-sizing: border-box; /* 🔥 გადაცდენის FIX */
-  padding: 14px 16px;
-  border-radius: 14px;
-  border: 1px solid #e5e7eb;
-  font-size: 14.5px;
-  background: #fafafa;
-  transition: border .2s, box-shadow .2s, background .2s;
-}
+    .prechat-input {
+      width: 100%;
+      box-sizing: border-box;
+      /* 🔥 გადაცდენის FIX */
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid #e5e7eb;
+      font-size: 14.5px;
+      background: #fafafa;
+      transition: border .2s, box-shadow .2s, background .2s;
+    }
 
-.prechat-input:focus {
-  outline: none;
-  background: #fff;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-}
+    .prechat-input:focus {
+      outline: none;
+      background: #fff;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
 
-.prechat-input.error {
-  border-color: #ef4444;
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
-}
+    .prechat-input.error {
+      border-color: #ef4444;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+    }
 
-.prechat-title {
-  background: #f4f6fa;
-  padding: 14px 16px;
-  border-radius: 14px;
-  font-size: 14px;
-  color: #374151;
-  line-height: 1.45;
-}
+    .prechat-title {
+      background: #f4f6fa;
+      padding: 14px 16px;
+      border-radius: 14px;
+      font-size: 14px;
+      color: #374151;
+      line-height: 1.45;
+    }
 
-.prechat-btn {
-  margin-top: 6px;
-}
+    .prechat-btn {
+      margin-top: 6px;
+    }
 
-/* =========================
+    /* =========================
    PHONE INPUT (COUNTRY + NUMBER)
 ========================= */
 
-.phone-row {
-  display: flex;
-  gap: 10px;
-  width: 100%;
-}
+    .phone-row {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+    }
 
-.phone-code {
-  min-width: 92px;
-  padding: 14px 12px;
-  border-radius: 14px;
-  border: 1px solid #e5e7eb;
-  background: #fafafa;
-  font-size: 14.5px;
-  cursor: pointer;
-  appearance: none;
-}
+    .phone-code {
+      min-width: 92px;
+      padding: 14px 12px;
+      border-radius: 14px;
+      border: 1px solid #e5e7eb;
+      background: #fafafa;
+      font-size: 14.5px;
+      cursor: pointer;
+      appearance: none;
+    }
 
-.phone-number {
-  flex: 1;
-  padding: 14px 16px;
-  border-radius: 14px;
-  border: 1px solid #e5e7eb;
-  font-size: 14.5px;
-  background: #fafafa;
-}
+    .phone-number {
+      flex: 1;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid #e5e7eb;
+      font-size: 14.5px;
+      background: #fafafa;
+    }
 
-.phone-code:focus,
-.phone-number:focus {
-  outline: none;
-  background: #fff;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-}
+    .phone-code:focus,
+    .phone-number:focus {
+      outline: none;
+      background: #fff;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
 
-.phone-code.error,
-.phone-number.error {
-  border-color: #ef4444;
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
-}
+    .phone-code.error,
+    .phone-number.error {
+      border-color: #ef4444;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+    }
 
 
-/* =========================
+    /* =========================
    INPUT LABELS (PRECHAT)
 ========================= */
 
-.input-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: #374151;
-  margin-bottom: 6px;
-}
+    .input-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 6px;
+    }
 
-.prechat-form {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
+    .prechat-form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
 
-.prechat-input {
-  width: 100%;
-  padding: 14px 16px;
-  border-radius: 14px;
-  border: 1px solid #e5e7eb;
-  font-size: 14.5px;
-  background: #fafafa;
-}
+    .prechat-input {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid #e5e7eb;
+      font-size: 14.5px;
+      background: #fafafa;
+    }
 
-.prechat-input:focus {
-  outline: none;
-  background: #fff;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-}
+    .prechat-input:focus {
+      outline: none;
+      background: #fff;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
 
-.btn.whatsapp-btn {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+    .btn.whatsapp-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
 
-  border: 1px solid #22c55e;
-  color: #16a34a;
-  background: #f0fdf4;
-}
+      border: 1px solid #22c55e;
+      color: #16a34a;
+      background: #f0fdf4;
+    }
 
-.btn.whatsapp-btn .wa-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    .btn.whatsapp-btn .wa-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
 
-  background: #22c55e;
-  color: #ffffff;
-}
+      background: #22c55e;
+      color: #ffffff;
+    }
 
-.btn.whatsapp-btn .wa-icon svg {
-  width: 14px;
-  height: 14px;
-}
-
-
+    .btn.whatsapp-btn .wa-icon svg {
+      width: 14px;
+      height: 14px;
+    }
 
 
 
@@ -895,26 +908,29 @@
 
 
 
-#geg-chat-close {
-  background: none;
-  border: none;
-
-  color: #ffffff;          /* მკვეთრი თეთრი */
-  font-size: 26px;         /* ვიზუალურად ბალანსირებული */
-  font-weight: 400;
-
-  line-height: 1;
-  padding: 4px 6px;
-
-  cursor: pointer;
-  opacity: 0.9;
-
-  transition: opacity 0.15s ease, transform 0.15s ease;
-}
 
 
-#geg-chat-close:hover {
-  opacity: 1;
-  transform: translateY(-1px);
-}
+    #geg-chat-close {
+      background: none;
+      border: none;
 
+      color: #ffffff;
+      /* მკვეთრი თეთრი */
+      font-size: 26px;
+      /* ვიზუალურად ბალანსირებული */
+      font-weight: 400;
+
+      line-height: 1;
+      padding: 4px 6px;
+
+      cursor: pointer;
+      opacity: 0.9;
+
+      transition: opacity 0.15s ease, transform 0.15s ease;
+    }
+
+
+    #geg-chat-close:hover {
+      opacity: 1;
+      transform: translateY(-1px);
+    }
